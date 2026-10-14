@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#121212">
+<meta name="theme-color" content="#e7f8ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Music Player</title>
+<title>AeroWave — Local Music Player</title>
 <style>
 :root {
   --bg: #121212;
@@ -626,12 +626,634 @@ input::placeholder { color: var(--text3); }
   .np-art-wrap { padding: 8px 0; }
   .np-art { max-width: 200px; }
 }
+
+/* ===== AEROWAVE: FRUTIGER AERO / EARLY-2000s SKIN ===== */
+:root {
+  --mini-h: 72px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  background-color: #d8f3ff;
+  color: var(--text);
+  font-family: Tahoma, "Trebuchet MS", Verdana, sans-serif;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  background-image:
+    linear-gradient(180deg, rgba(215, 246, 255, 0.04), rgba(14, 91, 139, 0.16)),
+    url("aero-assets/aero-meadow.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+#bg-layer.has-image::after { opacity: 0.08; }
+
+#app-frame {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  width: min(88vmin, 820px);
+  height: min(88vmin, 820px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 22px;
+  background:
+    linear-gradient(145deg, rgba(244, 253, 255, 0.82), rgba(192, 232, 247, 0.63));
+  box-shadow:
+    0 28px 90px rgba(0, 47, 89, 0.34),
+    0 5px 18px rgba(0, 74, 119, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.aero-windowbar {
+  position: absolute;
+  z-index: 25;
+  inset: 0 0 auto;
+  height: 46px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.43), transparent 50%),
+    linear-gradient(100deg, rgba(18, 109, 193, 0.94), rgba(79, 181, 230, 0.88) 52%, rgba(26, 133, 205, 0.92));
+  border-bottom: 1px solid rgba(255,255,255,0.78);
+  box-shadow: inset 0 -1px 0 rgba(8, 76, 141, 0.28), 0 2px 9px rgba(0,73,132,0.12);
+  text-shadow: 0 1px 2px rgba(0, 45, 99, 0.48);
+}
+
+.window-brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.window-mark {
+  width: 27px;
+  height: 27px;
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 1px 5px rgba(0,39,89,0.45);
+}
+.window-brand-copy { display: flex; flex-direction: column; line-height: 1.08; }
+.window-brand-copy strong { font-size: 13px; letter-spacing: 0.2px; }
+.window-brand-copy span { margin-top: 3px; font-size: 8px; letter-spacing: 1.3px; opacity: 0.83; }
+.window-controls { display: flex; gap: 6px; }
+.window-control {
+  width: 21px;
+  height: 21px;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.92);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 2px rgba(255,255,255,0.8), 0 1px 3px rgba(0,30,75,0.44);
+}
+.window-control::after {
+  content: "";
+  position: absolute;
+  inset: 3px 2px 9px;
+  border-radius: 20px 20px 7px 7px;
+  background: rgba(255,255,255,0.55);
+}
+.window-control.blue { background: linear-gradient(#68c4ff, #0873d1 55%, #004aab); }
+.window-control.green { background: linear-gradient(#baff73, #38d82c 55%, #05a728); }
+.window-control.red { background: linear-gradient(#ff9b9b, #ef3939 55%, #b81222); }
+
+.desktop-statusbar {
+  position: absolute;
+  z-index: 25;
+  inset: auto 0 0;
+  height: 34px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #155279;
+  background: linear-gradient(180deg, rgba(251,255,255,0.82), rgba(200,235,248,0.88));
+  border-top: 1px solid rgba(255,255,255,0.92);
+  box-shadow: 0 -2px 8px rgba(0,79,128,0.08);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.75px;
+}
+.desktop-statusbar > div { display: flex; align-items: center; gap: 7px; }
+.status-light {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #37d74a;
+  box-shadow: 0 0 0 3px rgba(55,215,74,0.16), 0 0 8px rgba(31,183,60,0.8);
+}
+
+.view {
+  top: 46px;
+  bottom: 34px;
+  background: transparent;
+}
+
+#welcome-view {
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 14px 22px 13px;
+  text-align: left;
+  overflow-y: auto;
+}
+.welcome-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  flex-shrink: 0;
+}
+.topline-pill, .welcome-eyebrow, .section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #28769d;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.25px;
+}
+.topline-pill {
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.42);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 2px 6px rgba(41,123,164,0.08);
+}
+.topline-light {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #37d74a;
+  box-shadow: 0 0 8px rgba(40,195,70,0.9);
+}
+.glass-icon-button, .lib-header-actions button, .np-header button, .queue-header button, .settings-header button {
+  border: 1px solid rgba(255,255,255,0.92);
+  color: #16608d;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(207,242,252,0.75) 48%, rgba(127,210,239,0.55));
+  box-shadow: inset 0 1px 1px #fff, 0 3px 8px rgba(26,105,154,0.15);
+}
+.glass-icon-button { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.glass-icon-button:hover, .lib-header-actions button:hover, .np-header button:hover { filter: brightness(1.04); transform: translateY(-1px); }
+
+.welcome-hero {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  align-items: center;
+  gap: 22px;
+  padding: 4px 16px 8px;
+}
+.welcome-visual {
+  position: relative;
+  min-width: 0;
+  min-height: 270px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.welcome-visual::before {
+  content: "";
+  position: absolute;
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(122,218,249,0.44) 48%, rgba(62,166,217,0) 72%);
+  filter: blur(3px);
+}
+.welcome-album {
+  position: relative;
+  z-index: 1;
+  width: min(76%, 260px);
+  aspect-ratio: 1;
+  border: 4px solid rgba(255,255,255,0.88);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 13px 30px rgba(10,91,143,0.26), inset 0 0 0 1px rgba(255,255,255,0.6);
+  transform: rotate(-7deg);
+}
+.control-ref {
+  position: absolute;
+  z-index: 2;
+  left: -4px;
+  bottom: 17px;
+  width: min(210px, 96%);
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(255,255,255,0.92);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(211,242,250,0.75));
+  box-shadow: 0 7px 17px rgba(18,93,139,0.18), inset 0 1px 0 #fff;
+  transform: rotate(-2deg);
+}
+.control-ref img { width: 82px; height: 41px; flex-shrink: 0; border: 1px solid rgba(62,129,164,0.26); border-radius: 6px; object-fit: cover; }
+.control-ref span { display: flex; flex-direction: column; min-width: 0; color: #20658b; line-height: 1.2; }
+.control-ref b { font-size: 8px; letter-spacing: 0.65px; }
+.control-ref small { margin-top: 4px; font-size: 8px; color: #55819a; }
+.welcome-copy { min-width: 0; padding: 8px 0; }
+.welcome-eyebrow { margin-bottom: 12px; }
+.welcome-copy h1 {
+  color: #113b5d;
+  font-size: clamp(30px, 4.5vw, 48px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -1.6px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.75);
+}
+.welcome-copy h1 em { color: #078fca; font-style: normal; }
+.welcome-copy > p:not(.welcome-eyebrow) {
+  max-width: 340px;
+  margin: 13px 0 18px;
+  color: #3e6780;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.welcome-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  max-width: 310px;
+}
+.btn-primary, .btn-secondary {
+  min-height: 43px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255,255,255,0.96);
+  border-radius: 999px;
+  box-shadow: inset 0 2px 2px rgba(255,255,255,0.8), 0 4px 10px rgba(14,96,140,0.15);
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+}
+.btn-primary {
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.7), transparent 42%),
+    linear-gradient(180deg, #71e868, #26d23e 52%, #00ac31);
+  box-shadow: inset 0 2px 2px rgba(255,255,255,0.86), 0 4px 12px rgba(2,155,49,0.24);
+  text-shadow: 0 1px 2px rgba(0,93,28,0.5);
+}
+.btn-secondary {
+  color: #15577e;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(236,251,255,0.86) 48%, rgba(160,222,243,0.76));
+}
+.btn-primary:hover, .btn-secondary:hover { transform: translateY(-1px); filter: brightness(1.04); }
+.btn-primary:active, .btn-secondary:active { transform: translateY(1px) scale(0.99); }
+.welcome-footline {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 2px 0;
+  border-top: 1px solid rgba(255,255,255,0.62);
+  color: #4c829e;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+#library-view { overflow: hidden; }
+.lib-header {
+  padding: 13px 19px 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.36), rgba(255,255,255,0.03));
+}
+.lib-header h1 {
+  color: #153f5e;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+}
+.lib-header h1 span { color: #4c829e !important; }
+.lib-header-actions { gap: 6px; }
+.lib-header-actions button { width: 36px; height: 36px; border-radius: 50%; }
+.search-wrap input {
+  color: #194966;
+  background: rgba(255,255,255,0.68);
+  border: 1px solid rgba(255,255,255,0.92);
+  border-radius: 999px;
+  box-shadow: inset 0 2px 5px rgba(33,113,157,0.1), 0 2px 5px rgba(255,255,255,0.45);
+}
+.search-wrap input::placeholder { color: #6b95aa; }
+.search-wrap svg { color: #4d89a7; }
+.lib-tabs {
+  gap: 5px;
+  margin: 0 15px;
+  padding: 0 4px;
+  border: 1px solid rgba(255,255,255,0.76);
+  border-radius: 999px;
+  background: rgba(231,248,255,0.5);
+}
+.lib-tab {
+  padding: 8px 12px;
+  margin: 3px 0;
+  border: 0;
+  border-radius: 999px;
+  color: #4b7c95;
+  font-size: 12px;
+}
+.lib-tab.active {
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.8);
+  background: linear-gradient(180deg, #45b8e6, #0c8ac7);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.55), 0 2px 5px rgba(0,111,166,0.18);
+}
+.lib-content { padding: 5px 8px calc(var(--mini-h) + 52px); }
+.track-item {
+  margin: 3px 8px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
+.track-item:hover, .track-item:active {
+  border-color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.43);
+}
+.track-item.playing {
+  border-color: rgba(255,255,255,0.92);
+  background: linear-gradient(100deg, rgba(77,197,236,0.25), rgba(255,255,255,0.34));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+}
+.track-title { color: #153f5e; font-weight: 700; }
+.track-artist { color: #547f96; }
+.track-duration { color: #6390a7; }
+.track-art-sm {
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 10px;
+  box-shadow: 0 2px 7px rgba(28,96,133,0.16);
+}
+.group-header, .pl-detail-header { background: rgba(226,246,253,0.82); color: #174b6b; }
+.group-subheader { color: #4e7890; }
+.empty-state { color: #4d7c95; }
+.empty-state svg { color: #4ba6cc; }
+
+#mini-player {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 42px;
+  height: var(--mini-h);
+  padding: 0 12px;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,0.94);
+  border-radius: 15px;
+  background: linear-gradient(120deg, rgba(255,255,255,0.92), rgba(199,238,250,0.87));
+  box-shadow: 0 7px 19px rgba(5,75,118,0.2), inset 0 1px 0 #fff;
+  color: #174868;
+  backdrop-filter: blur(12px);
+}
+#mini-player .mini-art {
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255,255,255,0.95);
+  border-radius: 50%;
+  background: url("aero-assets/aero-cd.jpg") center / cover, #b7e6f6;
+  box-shadow: 0 2px 6px rgba(13,87,132,0.2);
+}
+#mini-player .mini-art svg, .np-art > svg { display: none; }
+#mini-player .mini-title { color: #153f5e; font-weight: 700; }
+#mini-player .mini-artist { color: #5c8397; }
+#mini-player .mini-controls { gap: 2px; }
+#mini-player .mini-controls button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,0.88);
+  border-radius: 50%;
+  color: #156b9a;
+  background: linear-gradient(180deg, #fff, #b6e7f6);
+  box-shadow: inset 0 1px 1px #fff, 0 2px 5px rgba(25,99,139,0.15);
+}
+.mini-progress { top: 0; height: 3px; background: rgba(85,176,207,0.2); border-radius: 15px 15px 0 0; overflow: hidden; }
+.mini-progress-bar { background: linear-gradient(90deg, #8be45d, #11bfcb, #078bd0); }
+
+#nowplaying-view {
+  position: absolute;
+  inset: 46px 0 34px;
+  padding: 0 25px 10px;
+  border-radius: 0;
+  background: linear-gradient(155deg, rgba(231,249,255,0.96), rgba(194,232,247,0.93));
+  color: #153f5e;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+  backdrop-filter: blur(16px);
+}
+.np-header { padding: 7px 0; }
+.np-header .np-title-small { color: #43809e; font-size: 10px; letter-spacing: 1.2px; }
+.np-header button { width: 36px; height: 36px; border-radius: 50%; }
+.np-art-wrap { padding: 8px 0; }
+.np-art {
+  max-width: min(100%, 310px);
+  border: 4px solid rgba(255,255,255,0.92);
+  border-radius: 18px;
+  background: url("aero-assets/aero-cd.jpg") center / cover, #bce9f7;
+  box-shadow: 0 12px 28px rgba(14,83,129,0.24), inset 0 1px 0 #fff;
+}
+.np-art img { border-radius: 13px; }
+.np-track-title { color: #143e5d; }
+.np-track-artist { color: #4e7c94; }
+.seek-times { color: #63889d; }
+.seek-bar { background: rgba(54,131,165,0.2); }
+.seek-bar::-webkit-slider-thumb { background: linear-gradient(180deg, #fff, #15a9da); border: 1px solid #fff; }
+.np-controls { gap: 11px; }
+.np-controls .ctrl-btn {
+  width: 42px;
+  height: 42px;
+  color: #1675a2;
+  border: 1px solid rgba(255,255,255,0.88);
+  background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(162,222,242,0.77));
+  box-shadow: inset 0 1px 1px #fff, 0 3px 8px rgba(27,100,142,0.14);
+}
+.np-controls .ctrl-btn:active { background: #b4e8f7; }
+.np-controls .ctrl-play {
+  width: 58px;
+  height: 58px;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.96);
+  background: linear-gradient(180deg, #76d7fa, #168fd2 52%, #0866b5);
+  box-shadow: inset 0 2px 2px rgba(255,255,255,0.9), 0 5px 12px rgba(0,92,158,0.3);
+}
+.np-secondary { color: #327698; }
+.np-volume { color: #43819c; }
+.np-volume svg { color: #43819c; }
+.vol-bar { background: rgba(48,128,167,0.2); }
+.vol-bar::-webkit-slider-thumb { background: linear-gradient(180deg, #fff, #31acd9); border: 1px solid #fff; }
+
+#queue-panel, #settings-panel {
+  position: absolute;
+  inset: 46px 0 34px;
+  border-radius: 0;
+  background: linear-gradient(155deg, rgba(231,249,255,0.97), rgba(194,232,247,0.94));
+  color: #153f5e;
+  backdrop-filter: blur(16px);
+}
+.queue-header, .settings-header {
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.75);
+}
+.queue-header h2, .settings-header h2 { color: #153f5e; font-size: 17px; }
+.queue-header button, .settings-header button { width: 36px; height: 36px; border-radius: 50%; }
+.queue-item { border-bottom: 1px solid rgba(255,255,255,0.45); }
+.queue-item.current { background: rgba(88,196,229,0.2); }
+.queue-item .q-title { color: #153f5e; }
+.queue-item .q-artist { color: #5a8498; }
+.settings-content { padding: 15px 18px; }
+.settings-section h3 { color: #43809b; }
+.theme-swatch {
+  border: 1px solid rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.48);
+  box-shadow: 0 3px 8px rgba(24,95,137,0.09);
+}
+.theme-swatch.active { border-color: var(--accent); }
+.swatch-name { color: #457b95; }
+.bg-input-row input, #prompt-input {
+  color: #194966;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(255,255,255,0.94);
+}
+.bg-input-row button, .bg-apply-btn, .pl-play-btn, .prompt-confirm {
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.9);
+  background: linear-gradient(180deg, #72d86a, #18b93b);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 3px 7px rgba(18,139,55,0.18);
+}
+.bg-help, .bg-no-image { color: #5d8297; }
+.create-playlist-btn { color: #0987b8; }
+.playlist-name, .pl-detail-name { color: #153f5e; }
+.playlist-count { color: #5d8297; }
+.pl-shuffle-btn, .prompt-cancel {
+  color: #195d80;
+  border: 1px solid rgba(255,255,255,0.9);
+  background: linear-gradient(180deg, #fff, #bfeaf7);
+}
+#context-menu {
+  position: absolute;
+  bottom: 34px;
+  left: 0;
+  right: 0;
+  border: 1px solid rgba(255,255,255,0.92);
+  background: linear-gradient(160deg, rgba(247,253,255,0.97), rgba(197,234,247,0.97));
+  box-shadow: 0 -8px 25px rgba(8,70,111,0.2);
+  color: #153f5e;
+}
+#context-menu-backdrop { position: absolute; inset: 46px 0 34px; }
+.ctx-header { border-color: rgba(47,120,155,0.16); }
+.ctx-header .ctx-title { color: #153f5e; }
+.ctx-header .ctx-subtitle, .ctx-item svg { color: #568198; }
+.ctx-item:active { background: rgba(255,255,255,0.65); }
+#import-overlay {
+  position: absolute;
+  inset: 46px 0 34px;
+  border-radius: 0;
+  background: rgba(13,69,108,0.42);
+  backdrop-filter: blur(8px);
+}
+#import-overlay .progress-bar-outer { background: rgba(255,255,255,0.28); }
+#import-overlay .progress-bar-inner { background: linear-gradient(90deg, #8bec5f, #12b9d3); }
+#toast {
+  position: absolute;
+  bottom: calc(var(--mini-h) + 48px);
+  color: #164968;
+  border: 1px solid rgba(255,255,255,0.94);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(194,235,248,0.95));
+  box-shadow: 0 5px 15px rgba(10,75,117,0.22);
+}
+#prompt-backdrop { position: absolute; inset: 46px 0 34px; }
+#prompt-dialog {
+  position: absolute;
+  background: linear-gradient(145deg, #f7fdff, #ccecf7);
+  border: 1px solid rgba(255,255,255,0.98);
+  box-shadow: 0 14px 36px rgba(10,68,107,0.25), inset 0 1px 0 #fff;
+}
+.prompt-title { color: #153f5e; }
+.prompt-confirm, .prompt-cancel { border-radius: 999px; }
+
+#nowplaying-view:not(.visible),
+#queue-panel:not(.visible),
+#settings-panel:not(.visible) {
+  transform: translateY(110%);
+}
+
+@media (max-width: 640px) {
+  body { display: block; }
+  #app-frame {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+  .aero-windowbar { height: 43px; }
+  .desktop-statusbar { height: 30px; padding: 0 10px; font-size: 8px; }
+  .view { top: 43px; bottom: 30px; }
+  #welcome-view { padding: 10px 16px 12px; }
+  .welcome-topline { min-height: 34px; }
+  .glass-icon-button { width: 34px; height: 34px; }
+  .welcome-hero {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(115px, 0.5fr) minmax(0, 1.5fr);
+    gap: 0;
+    padding: 0 4px 4px;
+  }
+  .welcome-visual { min-height: 0; height: 100%; }
+  .welcome-album { width: auto; height: min(20vh, 158px); }
+  .control-ref { display: none; }
+  .welcome-copy { padding: 2px 4px 8px; }
+  .welcome-eyebrow { margin-bottom: 7px; font-size: 9px; }
+  .welcome-copy h1 { font-size: clamp(30px, 8.2vw, 39px); }
+  .welcome-copy > p:not(.welcome-eyebrow) { margin: 8px 0 12px; font-size: 12px; }
+  .welcome-buttons { gap: 7px; max-width: none; }
+  .btn-primary, .btn-secondary { min-height: 39px; padding: 8px 10px; font-size: 11px; }
+  .welcome-footline { padding-top: 8px; font-size: 7px; }
+  .lib-header { padding: 11px 14px 9px; }
+  .lib-tabs { margin: 0 10px; }
+  .lib-tab { padding: 8px 9px; font-size: 11px; }
+  #mini-player { bottom: 37px; left: 8px; right: 8px; height: 65px; padding: 0 8px; }
+  #mini-player .mini-controls button { width: 30px; height: 30px; }
+  #nowplaying-view, #queue-panel, #settings-panel { inset: 43px 0 30px; }
+  #nowplaying-view { padding: 0 17px 8px; }
+  .np-art-wrap { padding: 5px 0; }
+  .np-art { max-width: min(75vw, 290px); }
+  .np-track-info { padding: 8px 0 4px; }
+  .np-controls { gap: 7px; padding: 4px 0; }
+  .np-controls .ctrl-btn { width: 38px; height: 38px; }
+  .np-controls .ctrl-play { width: 54px; height: 54px; }
+  .np-secondary { padding: 0 10px 5px; }
+  .np-volume { padding: 0 10px 8px; }
+  #context-menu { bottom: 30px; }
+  #context-menu-backdrop, #prompt-backdrop { inset: 43px 0 30px; }
+  #import-overlay { inset: 43px 0 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
 </style>
 </head>
 <body>
 
 <!-- Background layer -->
 <div id="bg-layer"></div>
+
+<div id="app-frame">
+  <header class="aero-windowbar" aria-label="AeroWave music player">
+    <div class="window-brand">
+      <img class="window-mark" src="aero-assets/aero-cd.jpg" alt="">
+      <div class="window-brand-copy"><strong>AeroWave</strong><span>LOCAL MUSIC PLAYER</span></div>
+    </div>
+    <div class="window-controls" aria-hidden="true">
+      <span class="window-control blue"></span>
+      <span class="window-control green"></span>
+      <span class="window-control red"></span>
+    </div>
+  </header>
 
 <!-- Hidden file inputs -->
 <input type="file" id="folder-input" accept="audio/*" multiple hidden>
@@ -642,14 +1264,23 @@ input::placeholder { color: var(--text3); }
 
 <!-- ===== WELCOME VIEW ===== -->
 <div id="welcome-view" class="view">
-  <svg class="logo-icon" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M9 18V5l12-2v13"/>
-    <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-  </svg>
-  <h1>Music Player</h1>
-  <p>Add your music to get started</p>
+  <div class="welcome-topline">
+    <span class="topline-pill"><span class="topline-light"></span> YOUR MUSIC, YOUR WAY</span>
+  </div>
+  <div class="welcome-hero">
+    <div class="welcome-visual">
+      <img class="welcome-album" src="aero-assets/aero-cd.jpg" alt="Iridescent compact disc with a blue music note">
+      <div class="control-ref">
+        <img src="aero-assets/glass-controls.jpg" alt="Glossy colorful media buttons from the early 2000s">
+        <span><b>GLASS UI / 2006</b><small>soft buttons, brighter days</small></span>
+      </div>
+    </div>
+    <div class="welcome-copy">
+      <p class="welcome-eyebrow"><span class="topline-light"></span> A LITTLE BIT OF YESTERDAY</p>
+      <h1>Music for<br><em>blue-sky days.</em></h1>
+      <p>Your own soundtrack in a little world of clouds, color, and glass.</p>
   <div style="position:absolute;top:calc(12px + env(safe-area-inset-top, 0px));right:16px">
-    <button id="btn-settings-welcome" title="Settings" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--surface2)">
+    <button id="btn-settings-welcome" class="glass-icon-button" title="Settings">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -667,13 +1298,16 @@ input::placeholder { color: var(--text3); }
       Add YouTube Link
     </button>
   </div>
+    </div>
+  </div>
+  <div class="welcome-footline"><span>NO ADS · NO TRACKING</span><span>LOCAL LIBRARY · ALWAYS YOURS</span></div>
 </div>
 
 <!-- ===== LIBRARY VIEW ===== -->
 <div id="library-view" class="view hidden">
   <div class="lib-header">
     <div class="lib-header-top">
-      <h1>Library <span id="lib-count" style="font-size:14px;font-weight:400;color:var(--text3)"></span></h1>
+      <h1>My Library <span id="lib-count" style="font-size:14px;font-weight:400;color:var(--text3)"></span></h1>
       <div class="lib-header-actions">
         <button id="btn-add-more" title="Add music">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -854,6 +1488,12 @@ input::placeholder { color: var(--text3); }
     <button class="prompt-cancel" id="prompt-cancel">Cancel</button>
     <button class="prompt-confirm" id="prompt-confirm">OK</button>
   </div>
+</div>
+
+  <footer class="desktop-statusbar">
+    <div><span class="status-light"></span> AEROWAVE READY · LOCAL MODE</div>
+    <span>OFFLINE BY DESIGN</span>
+  </footer>
 </div>
 
 <script>
@@ -1975,6 +2615,7 @@ const Player = (() => {
 // SECTION 6: THEMES & BACKGROUND
 // ============================================================
 const THEMES = {
+  aero:   { name:'Aero',   bg:'#e7f8ff', surface:'rgba(255,255,255,0.76)', surface2:'rgba(205,238,249,0.82)', surface3:'rgba(172,220,239,0.88)', accent:'#159ed0', accentDim:'rgba(63,187,222,0.18)', text:'#173f5d', text2:'#4d758c', text3:'#7494a5', divider:'rgba(255,255,255,0.72)', danger:'#d83c4c', playBtnFg:'#ffffff' },
   dark:   { name:'Dark',   bg:'#121212', surface:'#1e1e1e', surface2:'#2a2a2a', surface3:'#333333', accent:'#1DB954', accentDim:'rgba(29,185,84,0.2)',  text:'#ffffff', text2:'#b3b3b3', text3:'#777777', divider:'rgba(255,255,255,0.08)', danger:'#e74c3c' },
   amoled: { name:'AMOLED', bg:'#000000', surface:'#0a0a0a', surface2:'#151515', surface3:'#1f1f1f', accent:'#1DB954', accentDim:'rgba(29,185,84,0.15)', text:'#ffffff', text2:'#aaaaaa', text3:'#666666', divider:'rgba(255,255,255,0.06)', danger:'#e74c3c' },
   light:  { name:'Light',  bg:'#f5f5f5', surface:'#ffffff', surface2:'#e8e8e8', surface3:'#dddddd', accent:'#1a9e48', accentDim:'rgba(26,158,72,0.15)', text:'#111111', text2:'#555555', text3:'#999999', divider:'rgba(0,0,0,0.1)',        danger:'#d63031' },
@@ -1983,7 +2624,7 @@ const THEMES = {
   rose:   { name:'Rose',   bg:'#1a0a14', surface:'#2a1420', surface2:'#3a1e2e', surface3:'#4a283c', accent:'#ff6b9d', accentDim:'rgba(255,107,157,0.2)',text:'#ffffff', text2:'#d4a0b0', text3:'#8e6a7a', divider:'rgba(255,255,255,0.08)', danger:'#e74c3c' },
 };
 
-let currentThemeId = 'dark';
+let currentThemeId = 'aero';
 let currentBgUrl = '';
 
 function applyTheme(themeId) {
@@ -2978,7 +3619,7 @@ const UI = (() => {
     // Restore theme and background before UI renders
     const savedTheme = await DB.getPref('theme');
     if (savedTheme && THEMES[savedTheme]) applyTheme(savedTheme);
-    else applyTheme('dark');
+    else applyTheme('aero');
     const savedBg = await DB.getPref('bgImage');
     if (savedBg) applyBackground(savedBg);
 
