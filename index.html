@@ -189,6 +189,20 @@ input::placeholder { color: var(--text3); }
 }
 .track-menu-btn:active { background: var(--surface2); }
 
+/* YouTube Search Specific UI */
+.yt-search-bar { display: flex; gap: 8px; padding: 12px 16px 8px; }
+.yt-search-bar input { flex: 1; }
+.yt-search-btn {
+  padding: 0 16px; border-radius: 8px; background: var(--accent); color: #fff;
+  font-weight: 600; font-size: 14px;
+}
+.yt-search-btn:active { opacity: 0.8; }
+.yt-add-btn {
+  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  background: var(--accent); color: #fff; border: 1px solid rgba(255,255,255,0.8);
+}
+.yt-add-btn.added { background: var(--surface2); color: var(--text3); border-color: transparent; }
+
 /* Group headers */
 .group-header {
   padding: 16px 16px 8px; font-size: 18px; font-weight: 700;
@@ -1329,6 +1343,7 @@ body {
     <button class="lib-tab" data-tab="artists">Artists</button>
     <button class="lib-tab" data-tab="albums">Albums</button>
     <button class="lib-tab" data-tab="playlists">Playlists</button>
+    <button class="lib-tab" data-tab="youtube">YouTube Search</button>
   </div>
   <div class="lib-content" id="lib-content"></div>
 </div>
@@ -2345,7 +2360,7 @@ const Queue = (() => {
 
 
 // ============================================================
-// SECTION 4b: YOUTUBE UTILITIES
+// SECTION 4b: YOUTUBE UTILITIES & SEARCH
 // ============================================================
 function extractVideoId(input) {
   if (!input) return null;
@@ -2374,6 +2389,28 @@ async function fetchYouTubeMeta(videoId) {
       thumbnail: 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg'
     };
   } catch(e) { return fallback; }
+}
+
+async function searchYouTube(query) {
+  try {
+    const url = 'https://pipe-server.net/api/v1/search?q=' + encodeURIComponent(query) + '&filter=music_videos';
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Search request failed');
+    const data = await resp.json();
+    const items = data.items || data || [];
+    return items.map(item => {
+      const videoId = item.url ? extractVideoId(item.url) : (item.id || item.videoId);
+      return {
+        videoId: videoId,
+        title: item.title || 'Untitled',
+        author: item.uploaderName || item.author || 'YouTube',
+        thumbnail: item.thumbnail || (videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '')
+      };
+    }).filter(i => i.videoId);
+  } catch (e) {
+    console.warn('Primary search proxy failed, falling back to oEmbed fetch if URL passed:', e);
+    return [];
+  }
 }
 
 let ytApiReady = false;
@@ -2717,6 +2754,7 @@ const UI = (() => {
   let currentPlaylistId = null;
   let artCache = new Map();
   let videoVisible = true;
+  let ytSearchResults = [];
 
   // Feature detection
   const supportsFolderPick = 'webkitdirectory' in document.createElement('input');
@@ -3145,6 +3183,11 @@ const UI = (() => {
     const total = Library.getAll().length;
     $('lib-count').textContent = total > 0 ? `(${total})` : '';
 
+    if (currentTab === 'youtube') {
+      renderYouTubeTab();
+      return;
+    }
+
     if (currentTab !== 'playlists') {
       if (tracks.length === 0 && !query) {
         libContent.innerHTML = '<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><p>No tracks yet</p></div>';
@@ -3286,6 +3329,92 @@ const UI = (() => {
 
     // Load art for visible tracks
     loadVisibleArt();
+  }
+
+  // === YOUTUBE TAB RENDERING ===
+  function renderYouTubeTab() {
+    let html = `
+      <div class="yt-search-bar">
+        <input type="text" id="yt-query-input" placeholder="Search YouTube songs or paste URL...">
+        <button class="yt-search-btn" id="yt-do-search">Search</button>
+      </div>
+      <div id="yt-results-container"></div>
+    `;
+    libContent.innerHTML = html;
+
+    const queryInput = $('yt-query-input');
+    const searchBtn = $('yt-do-search');
+
+    const handleYtSearch = async () => {
+      const val = queryInput.value.trim();
+      if (!val) return;
+      const directId = extractVideoId(val);
+      if (directId) {
+        showToast('Adding video by link...');
+        const meta = await fetchYouTubeMeta(directId);
+        addYtTrackToLib({ videoId: directId, title: meta.title, author: meta.author, thumbnail: meta.thumbnail });
+        return;
+      }
+      $('yt-results-container').innerHTML = '<div class="empty-state"><p>Searching YouTube...</p></div>';
+      ytSearchResults = await searchYouTube(val);
+      renderYouTubeResults();
+    };
+
+    searchBtn.onclick = handleYtSearch;
+    queryInput.onkeydown = (e) => { if (e.key === 'Enter') handleYtSearch(); };
+
+    renderYouTubeResults();
+  }
+
+  function renderYouTubeResults() {
+    const container = $('yt-results-container');
+    if (!container) return;
+
+    if (ytSearchResults.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p>Type a track name above to search YouTube</p></div>';
+      return;
+    }
+
+    let html = ytSearchResults.map(item => {
+      const isAdded = Library.isYouTubeDuplicate(item.videoId);
+      return `<div class="track-item">
+        <div class="track-art-sm">
+          <img src="${escHTML(item.thumbnail)}" alt=""><span class="yt-badge-sm">YT</span>
+        </div>
+        <div class="track-info">
+          <div class="track-title">${escHTML(item.title)}</div>
+          <div class="track-artist">${escHTML(item.author)}</div>
+        </div>
+        <button class="yt-add-btn${isAdded ? ' added' : ''}" data-ytid="${item.videoId}">
+          ${isAdded ? 'Added' : 'Add'}
+        </button>
+      </div>`;
+    }).join('');
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.yt-add-btn').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.dataset.ytid;
+        const item = ytSearchResults.find(i => i.videoId === id);
+        if (item && !Library.isYouTubeDuplicate(id)) {
+          addYtTrackToLib(item);
+          btn.textContent = 'Added';
+          btn.classList.add('added');
+        }
+      };
+    });
+  }
+
+  async function addYtTrackToLib(item) {
+    const trackData = {
+      title: item.title, artist: item.author, album: 'YouTube',
+      year: '', duration: 0, fileName: '', fileSize: 0, hasArt: false,
+      source: 'youtube', videoId: item.videoId, thumbnailUrl: item.thumbnail
+    };
+    const id = await DB.addTrackMeta(trackData);
+    Library.addToMemory({ ...trackData, id });
+    showToast(`Added: ${item.title}`);
   }
 
   function trackItemHTML(t, currentTrack) {
